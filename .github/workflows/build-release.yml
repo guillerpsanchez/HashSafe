@@ -23,14 +23,6 @@ jobs:
             target: aarch64-apple-darwin
             name: macos-aarch64
             binary_name: hashsafe
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
-            name: windows-x86_64
-            binary_name: hashsafe.exe
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            name: linux-x86_64
-            binary_name: hashsafe
 
     steps:
       - uses: actions/checkout@v3
@@ -55,26 +47,20 @@ jobs:
         shell: bash
         run: |
           cd target/${{ matrix.target }}/release
-          if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            7z a -tzip ../../../hashsafe-${{ matrix.name }}.zip ${{ matrix.binary_name }}
-          else
-            tar czvf ../../../hashsafe-${{ matrix.name }}.tar.gz ${{ matrix.binary_name }}
-          fi
+          tar czvf ../../../hashsafe-${{ matrix.name }}.tar.gz ${{ matrix.binary_name }}
           cd -
       
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: hashsafe-${{ matrix.name }}
-          path: |
-            hashsafe-${{ matrix.name }}.zip
-            hashsafe-${{ matrix.name }}.tar.gz
+          path: hashsafe-${{ matrix.name }}.tar.gz
           if-no-files-found: ignore
 
   release:
     name: Release
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Download artifacts
@@ -83,9 +69,7 @@ jobs:
       - name: Create a new GitHub release
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            hashsafe-*/hashsafe-*.zip
-            hashsafe-*/hashsafe-*.tar.gz
+          files: hashsafe-*/hashsafe-*.tar.gz
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
