@@ -63,7 +63,7 @@ jobs:
           cd -
       
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: hashsafe-${{ matrix.name }}
           path: |
@@ -78,7 +78,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       
       - name: Create a new GitHub release
         uses: softprops/action-gh-release@v1
@@ -135,7 +135,7 @@ jobs:
           cd -
       
       - name: Upload universal binary artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: hashsafe-macos-universal
           path: hashsafe-macos-universal.tar.gz
